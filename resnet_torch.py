@@ -129,7 +129,7 @@ class ResNet(torch.nn.Module):
 
         preds = self.output_layer(gap_layer)
 
-        del output_block_1, output_block_2, output_block_3, gap_layer # release memory
+        # del output_block_1, output_block_2, output_block_3, gap_layer # release memory
         
         return preds
 
