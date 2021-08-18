@@ -4,6 +4,23 @@ from os.path import join
 import time
 import torch
 
+"""
+How to call the model? 
+
+from resnet_torch import ResNet, train
+
+X_train = torch.from_numpy(X_train) # converts X_train from numpy to tensor
+model = ResNet(output_directory='', input_shape=X_train.shape[1:], nb_classes=2)
+print(model)
+train(model, X_train, y_train, device=torch.device('cpu'), nb_epochs=20)
+
+How to run a code on the GPU? 
+1. nvidia-smi -- to look at the GPU usage
+2. CUDA_VISIBLE_DEVICES=#id *run*.py (where #id is the GPU ID to choose, the one whice is free)
+
+# Can also do it on a jupyter notebook.
+"""
+
 class ResNet(torch.nn.Module):
     """
     Parameters
@@ -12,7 +29,9 @@ class ResNet(torch.nn.Module):
         Output directory to save the model.
 
     input_shape: tuple
-        Shape of the input time series.
+        Shape of the input time series. (f, T) where 
+        f is the number of features and T is the number
+        of time steps.
 
     nb_classes: int
         Number of classes. 
@@ -132,7 +151,6 @@ class ResNet(torch.nn.Module):
         # del output_block_1, output_block_2, output_block_3, gap_layer # release memory
         
         return preds
-
 
     def save_model(self):
         torch.save(self.model, join(self.output_directory, self.name, '.pth'))
