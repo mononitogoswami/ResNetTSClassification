@@ -59,8 +59,6 @@ class ResNet(torch.nn.Module):
         self.n_feature_maps = n_feature_maps
         self.output_directory = output_directory
         self.name = name
-        self.batch_size = batch_size
-        self.nb_epochs = nb_epochs
         self.input_shape = input_shape # (num_features, num_timesteps)
         self.nb_classes = nb_classes
         self.verbose = verbose
