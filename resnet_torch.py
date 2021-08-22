@@ -57,7 +57,6 @@ class ResNet(torch.nn.Module):
         super().__init__()
 
         self.n_feature_maps = n_feature_maps
-        self.max_lr = max_lr
         self.output_directory = output_directory
         self.name = name
         self.batch_size = batch_size
