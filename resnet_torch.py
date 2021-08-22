@@ -227,8 +227,11 @@ def train(model, X_train, y_train, sample_weights=None,
             acc_per_batch.append(score(batch_y.cpu().detach().numpy(), y_pred.cpu().detach().numpy()))
             loss_per_batch.append(loss.cpu().detach().item())
 
-        train_acc.append(np.mean(acc_per_batch))
-        train_loss.append(np.mean(loss_per_batch))
+        batch_acc = np.mean(acc_per_batch)
+        batch_loss = np.mean(loss_per_batch)
+        print(f'Epoch {epoch} | Accuracy: {batch_acc} | Loss: {batch_loss}')
+        train_acc.append(batch_acc)
+        train_loss.append(batch_loss)
             
         if val_dataloader is not None: 
             with torch.no_grad():
