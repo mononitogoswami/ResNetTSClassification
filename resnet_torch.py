@@ -1,4 +1,4 @@
-from data import Dataset
+from ResNetTSClassification.data import Dataset
 import numpy as np
 from os.path import join
 import time
