@@ -250,3 +250,5 @@ def train(model, X_train, y_train, sample_weights=None,
 
     # TODO: Save the best model 
     model.save_model()
+
+    return model
