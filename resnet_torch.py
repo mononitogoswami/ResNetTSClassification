@@ -227,7 +227,7 @@ def train(model, X_train, y_train, sample_weights=None,
             loss.backward()
             optimizer.step()
 
-            acc_per_batch.append(score(batch_y.cpu().detach().numpy(), y_pred.cpu().detach().numpy()))
+            acc_per_batch.append(score(batch_y.cpu().detach().numpy(), torch.argmax(y_pred, dim=1).cpu().detach().numpy()))
             loss_per_batch.append(loss.cpu().detach().item())
 
         batch_acc = np.mean(acc_per_batch)
