@@ -9,8 +9,7 @@ parser = argparse.ArgumentParser(description='Hyper-parameters to train ResNet f
 
 parser.add_argument('data_path', type=str, 
 	default=r'/zfsauton/project/public/Mononito/MLADI_weak_supervision/',
-	help='Path where data is stored.', 
-	required=True)
+	help='Path where data is stored.')
 
 parser.add_argument('output_directory', type=str, 
 	default='../',
