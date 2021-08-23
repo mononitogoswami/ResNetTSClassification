@@ -245,7 +245,7 @@ def train(model, X_train, y_train, sample_weights_train=None,
 
         batch_acc = np.mean(acc_per_batch)
         batch_loss = np.mean(loss_per_batch)
-        print(f'Epoch {epoch} | Accuracy: {batch_acc} | Loss: {batch_loss}')
+        print(f'Epoch {epoch} | Train Accuracy: {batch_acc} | Train Loss: {batch_loss}')
         train_acc.append(batch_acc)
         train_loss.append(batch_loss)
             
@@ -271,7 +271,7 @@ def train(model, X_train, y_train, sample_weights_train=None,
 
                 batch_acc = np.mean(acc_per_batch)
                 batch_loss = np.mean(loss_per_batch)
-                print(f'Epoch {epoch} | Accuracy: {batch_acc} | Loss: {batch_loss}')
+                print(f'Epoch {epoch} | Test Accuracy: {batch_acc} | Test Loss: {batch_loss}')
                 val_acc.append(batch_acc)
                 val_loss.append(batch_loss)
 
