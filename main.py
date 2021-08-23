@@ -45,13 +45,9 @@ parser.add_argument('--batch_size', type=int,
 
 args = vars(parser.parse_args())
 
-data_path = args['data_path']# r'/zfsauton/project/public/Mononito/MLADI_weak_supervision/'
+data_path = args['data_path'] # r'/zfsauton/project/public/Mononito/MLADI_weak_supervision/'
 X_train = torch.load(join(data_path, 'X_RR.pt')).double()
-y_train = torch.load(join(data_path, 'y_RR.pt')).long()
-
-# # For simulation, since y_train is inaccurate
-# y_train = torch.from_numpy(np.random.choice(2, len(X_train))).long()
-# print('Shape of y_train', y_train.shape)
+y_train = torch.load(join(data_path, 'y_RR_corrected.pt')).long()
 
 print(f'Shape of X_train: {X_train.shape} and y_train: {y_train.shape}')
 # print(f'Shape of X_val: {X_val.shape} and y_val: {y_val.shape}')
@@ -72,7 +68,3 @@ trained_model = train(model, X_train, y_train, sample_weights=None,
     max_lr=args['max_lr'])
 
 print('Finished training model!')
-
-
-
-
