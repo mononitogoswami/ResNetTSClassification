@@ -269,8 +269,11 @@ def train(model, X_train, y_train, sample_weights_train=None,
                     acc_per_batch.append(score(batch_y.cpu().detach().numpy(), torch.argmax(y_pred, dim=1).cpu().detach().numpy()))
                     loss_per_batch.append(loss.cpu().detach().item())
 
-                val_acc.append(np.mean(acc_per_batch))
-                val_loss.append(np.mean(loss_per_batch))
+                batch_acc = np.mean(acc_per_batch)
+                batch_loss = np.mean(loss_per_batch)
+                print(f'Epoch {epoch} | Accuracy: {batch_acc} | Loss: {batch_loss}')
+                val_acc.append(batch_acc)
+                val_loss.append(batch_loss)
 
     # TODO: Save the best model 
     model.save_model()

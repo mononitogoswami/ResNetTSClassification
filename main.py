@@ -7,6 +7,7 @@ import os
 from os.path import join
 from resnet_torch import ResNet, train
 import torch
+from sklearn.model_selection import train_test_split
 
 parser = argparse.ArgumentParser(description='Hyper-parameters to train ResNet for Time series classifaction.')
 
@@ -46,11 +47,14 @@ parser.add_argument('--batch_size', type=int,
 args = vars(parser.parse_args())
 
 data_path = args['data_path'] # r'/zfsauton/project/public/Mononito/MLADI_weak_supervision/'
-X_train = torch.load(join(data_path, 'X_RR.pt')).double()
-y_train = torch.load(join(data_path, 'y_RR_corrected.pt')).long()
+X = torch.load(join(data_path, 'X_RR.pt')).double().numpy()
+y = torch.load(join(data_path, 'y_RR_corrected.pt')).long().numpy()
+
+X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)
+X_train, X_val, y_train, y_val = torch.from_numpy(X_train), torch.from_numpy(X_val), torch.from_numpy(y_train), torch.from_numpy(y_val)
 
 print(f'Shape of X_train: {X_train.shape} and y_train: {y_train.shape}')
-# print(f'Shape of X_val: {X_val.shape} and y_val: {y_val.shape}')
+print(f'Shape of X_val: {X_val.shape} and y_val: {y_val.shape}')
 
 nb_classes = len(np.unique(y_train.numpy()))
 
