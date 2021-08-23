@@ -222,11 +222,11 @@ def train(model, X_train, y_train, sample_weights_train=None,
     for epoch in tqdm(range(nb_epochs)):
         loss_per_batch = []
         acc_per_batch = []
-        for batch_X, batch_y, batch_weights in train_dataloader:
+        for batch_data in train_dataloader:
             if sample_weights_train is None: 
-                batch_X, batch_y = batch_X.to(device), batch_y.to(device)
+                batch_X, batch_y = batch_data[0].to(device), batch_data[1].to(device)
             else:
-                batch_X, batch_y, batch_weights = batch_X.to(device), batch_y.to(device), batch_weights.to(device)
+                batch_X, batch_y, batch_weights = batch_data[0].to(device), batch_data[1].to(device), batch_data[2].to(device)
     
             optimizer.zero_grad()
             
@@ -253,11 +253,11 @@ def train(model, X_train, y_train, sample_weights_train=None,
             with torch.no_grad():
                 loss_per_batch = []
                 acc_per_batch = []
-                for batch_X, batch_y, batch_weights in val_dataloader:
-                    if sample_weights_train is None: 
-                        batch_X, batch_y = batch_X.to(device), batch_y.to(device)
+                for batch_data in val_dataloader:
+                    if sample_weights_val is None: 
+                        batch_X, batch_y = batch_data[0].to(device), batch_data[1].to(device)
                     else:
-                        batch_X, batch_y, batch_weights = batch_X.to(device), batch_y.to(device), batch_weights.to(device)
+                        batch_X, batch_y, batch_weights = batch_data[0].to(device), batch_data[1].to(device), batch_data[2].to(device)
                     
                     y_pred = model(batch_X)
                     loss = lossFn(y_pred, batch_y)

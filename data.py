@@ -20,7 +20,7 @@ class Dataset(torch.utils.data.Dataset):
 
   def __getitem__(self, indices):
     if self.weigths is None: 
-      return self.X[indices], self.y[indices], None
+      return self.X[indices], self.y[indices]
     else:   
       return self.X[indices], self.y[indices], self.weigths[indices]
 
