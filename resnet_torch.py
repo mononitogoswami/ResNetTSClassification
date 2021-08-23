@@ -151,7 +151,7 @@ class ResNet(torch.nn.Module):
         return preds
 
     def save_model(self):
-        torch.save(self.model, join(self.output_directory, self.name, '.pth'))
+        torch.save(self.model, join(self.output_directory, f'{self.name}.pth'))
 
 
 def score(y_true, y_pred):
@@ -211,6 +211,8 @@ def train(model, X_train, y_train, sample_weights=None,
 
     val_acc, val_loss = [], []
     train_acc, train_loss = [], []
+    
+    model.to(device) # send model to the device
     for epoch in tqdm(range(nb_epochs)):
         loss_per_batch = []
         acc_per_batch = []
@@ -219,8 +221,8 @@ def train(model, X_train, y_train, sample_weights=None,
     
             optimizer.zero_grad()
             
-            y_preds = model(batch_X)
-            loss = lossFn(y_preds, batch_y)
+            y_pred = model(batch_X)
+            loss = lossFn(y_pred, batch_y)
             
             loss.backward()
             optimizer.step()
@@ -240,8 +242,8 @@ def train(model, X_train, y_train, sample_weights=None,
                 acc_per_batch = []
                 for batch_X, batch_y in train_dataloader:
                     batch_X, batch_y = batch_X.to(device), batch_y.to(device)
-                    y_preds = model(batch_X)
-                    loss = lossFn(y_preds, batch_y)
+                    y_pred = model(batch_X)
+                    loss = lossFn(y_pred, batch_y)
 
                     acc_per_batch.append(score(batch_y.cpu().detach().numpy(), y_pred.cpu().detach().numpy()))
                     loss_per_batch.append(loss.cpu().detach().item())
