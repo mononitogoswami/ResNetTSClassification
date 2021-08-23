@@ -160,9 +160,10 @@ def score(y_true, y_pred):
     return np.mean(y_true == y_pred)
 
 
-def train(model, X_train, y_train, sample_weights=None,
-    X_val=None, y_val=None, device=torch.device('cpu'),
-    batch_size=8, nb_epochs=200, max_lr=1e-3):
+def train(model, X_train, y_train, sample_weights_train=None,
+    X_val=None, y_val=None, sample_weights_val=None,
+    device=torch.device('cpu'), batch_size=8, nb_epochs=200, 
+    max_lr=1e-3):
     """
     Parameters
     ---------- 
@@ -175,14 +176,17 @@ def train(model, X_train, y_train, sample_weights=None,
     y_train: torch.tensor
         (N,) tensor with training targets from N samples
 
-    sample_weights: torch.tensor
-        (N,) tensor with sample weights from N samples            
+    sample_weights_train: torch.tensor
+        (N, 1) tensor with sample weights from N train samples.             
 
     X_val: torch.tensor
         (M, f, T) tensor. Validation data with data M samples, f features and T timesteps
 
     y_val: torch.tensor
-        (M,) tensor with validation targets from M samples
+        (M, 1) tensor with validation targets from M samples
+
+    sample_weights_val: torch.tensor
+        (M,) tensor with sample weights from N validation samples. 
 
     device: torch.device
         Ab object representing the device. By default 'cpu'.    
@@ -196,15 +200,17 @@ def train(model, X_train, y_train, sample_weights=None,
     nb_epochs: int
         Number of epochs to train the model. Default: 200. 
     """
+    if sample_weights_train is None:
+        lossFn = torch.nn.CrossEntropyLoss() 
+    else:            
+        lossFn = torch.nn.CrossEntropyLoss(reduction=None) # Weigh loss by sample weigths
+    optimizer = torch.optim.Adam(model.parameters(), lr=max_lr)  
 
-    lossFn = torch.nn.CrossEntropyLoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=max_lr) # WHAT ARE THE PARAMETERS? 
-
-    train_data = Dataset(X_train, y_train)
+    train_data = Dataset(X_train, y_train, sample_weights_train)
     train_dataloader = torch.utils.data.DataLoader(train_data, batch_size=batch_size, shuffle=True)
 
     if X_val is not None: 
-        val_data = Dataset(X_val, y_val)
+        val_data = Dataset(X_val, y_val, sample_weights_val)
         val_dataloader = torch.utils.data.DataLoader(val_data, batch_size=batch_size, shuffle=True)
     else:
         val_dataloader = None 
@@ -216,13 +222,17 @@ def train(model, X_train, y_train, sample_weights=None,
     for epoch in tqdm(range(nb_epochs)):
         loss_per_batch = []
         acc_per_batch = []
-        for batch_X, batch_y in train_dataloader:
-            batch_X, batch_y = batch_X.to(device), batch_y.to(device)
+        for batch_X, batch_y, batch_weights in train_dataloader:
+            batch_X, batch_y, batch_weights = batch_X.to(device), batch_y.to(device), batch_weights.to(device)
     
             optimizer.zero_grad()
             
             y_pred = model(batch_X)
             loss = lossFn(y_pred, batch_y)
+
+            if sample_weights_train is not None: 
+                loss = loss * batch_weights
+                loss = loss.sum() / batch_weights.sum()
             
             loss.backward()
             optimizer.step()
@@ -240,12 +250,16 @@ def train(model, X_train, y_train, sample_weights=None,
             with torch.no_grad():
                 loss_per_batch = []
                 acc_per_batch = []
-                for batch_X, batch_y in train_dataloader:
-                    batch_X, batch_y = batch_X.to(device), batch_y.to(device)
+                for batch_X, batch_y, batch_weights in val_dataloader:
+                    batch_X, batch_y = batch_X.to(device), batch_y.to(device), batch_weights.to(device)
                     y_pred = model(batch_X)
                     loss = lossFn(y_pred, batch_y)
 
-                    acc_per_batch.append(score(batch_y.cpu().detach().numpy(), y_pred.cpu().detach().numpy()))
+                    if sample_weights_val is not None: 
+                        loss = loss * batch_weights
+                        loss = loss.sum() / batch_weights.sum()
+
+                    acc_per_batch.append(score(batch_y.cpu().detach().numpy(), torch.argmax(y_pred, dim=1).cpu().detach().numpy()))
                     loss_per_batch.append(loss.cpu().detach().item())
 
                 val_acc.append(np.mean(acc_per_batch))

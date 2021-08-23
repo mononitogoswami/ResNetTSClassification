@@ -10,14 +10,18 @@ class Dataset(torch.utils.data.Dataset):
     y: np.ndarray
       Training labels
   """
-  def __init__(self, X, y):
+  def __init__(self, X, y, weigths):
     self.X = X
     self.y = y
+    self.weigths = weigths
 
   def __len__(self):
     return len(self.y)
 
   def __getitem__(self, indices):
-    return self.X[indices], self.y[indices]
+    if self.weigths is None: 
+      return self.X[indices], self.y[indices]
+    else:   
+      return self.X[indices], self.y[indices], self.weigths[indices]
 
 
