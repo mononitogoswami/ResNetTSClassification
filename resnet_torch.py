@@ -219,8 +219,8 @@ def train(model, X_train, y_train, sample_weights=None,
     
             optimizer.zero_grad()
             
-            y_preds = model(batch_X)
-            loss = lossFn(y_preds, batch_y)
+            y_pred = model(batch_X)
+            loss = lossFn(y_pred, batch_y)
             
             loss.backward()
             optimizer.step()
@@ -240,8 +240,8 @@ def train(model, X_train, y_train, sample_weights=None,
                 acc_per_batch = []
                 for batch_X, batch_y in train_dataloader:
                     batch_X, batch_y = batch_X.to(device), batch_y.to(device)
-                    y_preds = model(batch_X)
-                    loss = lossFn(y_preds, batch_y)
+                    y_pred = model(batch_X)
+                    loss = lossFn(y_pred, batch_y)
 
                     acc_per_batch.append(score(batch_y.cpu().detach().numpy(), y_pred.cpu().detach().numpy()))
                     loss_per_batch.append(loss.cpu().detach().item())
