@@ -24,7 +24,7 @@ parser.add_argument('name', type=str,
 	help='Name of model.')
 
 parser.add_argument('device', type=str, 
-	choices=['cpu', 'cuda']
+	choices=['cpu', 'cuda'],
 	default='cuda',
 	help='Device to train the model.')
 
