@@ -223,7 +223,10 @@ def train(model, X_train, y_train, sample_weights_train=None,
         loss_per_batch = []
         acc_per_batch = []
         for batch_X, batch_y, batch_weights in train_dataloader:
-            batch_X, batch_y, batch_weights = batch_X.to(device), batch_y.to(device), batch_weights.to(device)
+            if sample_weights_train is None: 
+                batch_X, batch_y = batch_X.to(device), batch_y.to(device)
+            else:
+                batch_X, batch_y, batch_weights = batch_X.to(device), batch_y.to(device), batch_weights.to(device)
     
             optimizer.zero_grad()
             
@@ -251,7 +254,11 @@ def train(model, X_train, y_train, sample_weights_train=None,
                 loss_per_batch = []
                 acc_per_batch = []
                 for batch_X, batch_y, batch_weights in val_dataloader:
-                    batch_X, batch_y = batch_X.to(device), batch_y.to(device), batch_weights.to(device)
+                    if sample_weights_train is None: 
+                        batch_X, batch_y = batch_X.to(device), batch_y.to(device)
+                    else:
+                        batch_X, batch_y, batch_weights = batch_X.to(device), batch_y.to(device), batch_weights.to(device)
+                    
                     y_pred = model(batch_X)
                     loss = lossFn(y_pred, batch_y)
 

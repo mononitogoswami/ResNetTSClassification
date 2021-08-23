@@ -62,9 +62,9 @@ model = ResNet(output_directory=args['output_directory'],
 
 print('Model:\n', model)
 
-trained_model = train(model, X_train, y_train, sample_weights=None,
-    X_val=None, y_val=None, device=torch.device(args['device']),
-    batch_size=args['batch_size'], nb_epochs=args['nb_epochs'], 
-    max_lr=args['max_lr'])
+trained_model = train(model, X_train, y_train, sample_weights_train=None,
+    X_val=None, y_val=None, sample_weights_val=None, 
+    device=torch.device(args['device']), batch_size=args['batch_size'], 
+    nb_epochs=args['nb_epochs'], max_lr=args['max_lr'])
 
 print('Finished training model!')
