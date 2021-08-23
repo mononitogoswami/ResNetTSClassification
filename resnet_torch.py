@@ -151,7 +151,7 @@ class ResNet(torch.nn.Module):
         return preds
 
     def save_model(self):
-        torch.save(self.model, join(self.output_directory, self.name, '.pth'))
+        torch.save(self.model, join(self.output_directory, f'{self.name}.pth'))
 
 
 def score(y_true, y_pred):
@@ -211,6 +211,8 @@ def train(model, X_train, y_train, sample_weights=None,
 
     val_acc, val_loss = [], []
     train_acc, train_loss = [], []
+    
+    model.to(device) # send model to the device
     for epoch in tqdm(range(nb_epochs)):
         loss_per_batch = []
         acc_per_batch = []
